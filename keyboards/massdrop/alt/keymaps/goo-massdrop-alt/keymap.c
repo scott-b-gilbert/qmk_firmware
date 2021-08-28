@@ -19,7 +19,6 @@ enum my_layers {
 };
 
 #define CTL_ESC  LCTL_T(KC_ESC)    // Tap for ESC, hold for CTRL
-#define MD_LOCK  LCTL(LGUI(KC_Q))  // MacOS lock screen shortcut
 #define MO_FUNC  MO(_FUNCTION)     // Hold for function layer
 #define TG_NUMP  TG(_NUMPAD)       // Toggle numpad layer
 #define OSL_LAY  OSL(_LAYOUTS)     // One-shot layer to change layout
