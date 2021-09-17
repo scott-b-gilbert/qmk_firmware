@@ -18,6 +18,41 @@ enum my_layers {
     _NUMPAD,
 };
 
+// Tap Dance structures/enums/key defines
+typedef struct {
+	bool is_press_action;
+	int state;
+} tap;
+
+enum {
+	SINGLE_TAP = 1,
+	SINGLE_HOLD = 2,
+	DOUBLE_TAP = 3,
+	DOUBLE_HOLD = 4,
+	TRIPLE_TAP = 5,
+	TRIPLE_HOLD = 6,
+};
+
+enum {
+	TD_X = 0,
+    TD_C,
+	TD_V,
+	RSHIFT,
+	LSHIFT,
+};
+
+int cur_dance (qk_tap_dance_state_t *state);
+void x_finished (qk_tap_dance_state_t *state, void *user_data);
+void x_reset (qk_tap_dance_state_t *state, void *user_data);
+void lshift_finished (qk_tap_dance_state_t *state, void *user_data);
+void lshift_reset(qk_tap_dance_state_t *state, void *user_data);
+void rshift_finished (qk_tap_dance_state_t *state, void *user_data);
+void rshift_reset(qk_tap_dance_state_t *state, void *user_data);
+void c_finished (qk_tap_dance_state_t *state, void *user_data);
+void c_reset (qk_tap_dance_state_t *state, void *user_data);
+void v_finished (qk_tap_dance_state_t *state, void *user_data);
+void v_reset (qk_tap_dance_state_t *state, void *user_data);
+
 #define CTL_ESC  LCTL_T(KC_ESC)    // Tap for ESC, hold for CTRL
 #define MO_FUNC  MO(_FUNCTION)     // Hold for function layer
 #define TG_NUMP  TG(_NUMPAD)       // Toggle numpad layer
@@ -262,5 +297,127 @@ led_instruction_t led_instructions[] = {
 	{ .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id1 = 2147483648, .layer = 2, .r = 33, .g =150, .b = 243},
 
     { .end = 1 }
+};
+
+int cur_dance (qk_tap_dance_state_t *state) {
+	if (state->count == 1) {
+		if (state->interrupted || !state->pressed) return SINGLE_TAP;
+		// key not interrupted, but still held sends 'HOLD'
+		else return SINGLE_HOLD;
+	}
+	else if (state->count == 2) {
+		if (state->interrupted || !state->pressed) return DOUBLE_TAP;
+		else return DOUBLE_HOLD;
+	}
+	else if (state->count == 3) {
+		if (state->interrupted || !state->pressed)return TRIPLE_TAP;
+		else return TRIPLE_HOLD;
+	}
+	else return 8; // magic number that i dont believe works. 
+}
+
+static tap xtap_state = {
+	.is_press_action = true,
+	.state = 0
+};
+
+// registering keypresses
+void x_finished (qk_tap_dance_state_t *state, void *user_data) {
+	xtap_state.state = cur_dance(state);
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_X); break;
+		case SINGLE_HOLD: register_code16(C(KC_X)); break;
+	}
+}
+
+void c_finished (qk_tap_dance_state_t *state, void *user_data) {
+	xtap_state.state = cur_dance(state);
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_C); break;
+		case SINGLE_HOLD: register_code16(C(KC_C)); break;
+	}
+}
+
+void v_finished (qk_tap_dance_state_t *state, void *user_data) {
+	xtap_state.state = cur_dance(state);
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_V); break;
+		case SINGLE_HOLD: register_code16(C(KC_V)); break;
+	}
+}
+
+void lshift_finished (qk_tap_dance_state_t *state, void *user_data) {
+	xtap_state.state = cur_dance(state);
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_LSFT); register_code16(KC_9); break;
+		case SINGLE_HOLD: register_code16(KC_LSFT); break;
+		case DOUBLE_TAP: register_code16(KC_LBRC); break;
+		case TRIPLE_TAP: register_code16(KC_LSFT); register_code16(KC_LBRC); break;
+	}
+}
+
+void rshift_finished (qk_tap_dance_state_t *state, void *user_data) {
+	xtap_state.state = cur_dance(state);
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_LSFT); register_code16(KC_0); break;
+		case SINGLE_HOLD: register_code16(KC_RSFT); break;
+		case DOUBLE_TAP: register_code16(KC_RBRC); break;
+		case TRIPLE_TAP: register_code16(KC_LSFT); register_code16(KC_RBRC); break;
+	}
+}
+
+// forgetting keypresses
+
+void x_reset (qk_tap_dance_state_t *state, void *user_data) {
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_X); break;
+		case SINGLE_HOLD: register_code16(C(KC_X)); break;
+	}
+	xtap_state.state = 0;
+}
+
+void c_reset (qk_tap_dance_state_t *state, void *user_data) {
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_C); break;
+		case SINGLE_HOLD: register_code16(C(KC_C)); break;
+	}
+	xtap_state.state = 0;
+}
+
+void v_reset (qk_tap_dance_state_t *state, void *user_data) {
+	switch (xtap_state.state) {
+		case SINGLE_TAP: register_code16(KC_V); break;
+		case SINGLE_HOLD: register_code16(C(KC_V)); break;
+	}
+	xtap_state.state = 0;
+}
+
+void lshift_reset (qk_tap_dance_state_t *state, void *user_data) {
+	switch (xtap_state.state) {
+		case SINGLE_TAP: unregister_code16(KC_9); unregister_code16(KC_LSFT); break;
+		case SINGLE_HOLD: unregister_code16(KC_LSFT); break;
+		case DOUBLE_TAP: unregister_code16(KC_LBRC); break;
+		case TRIPLE_TAP: unregister_code16(KC_LBRC); unregister_code16(KC_LSFT); break;
+	}
+	xtap_state.state = 0;
+}
+
+void rshift_reset (qk_tap_dance_state_t *state, void *user_data) {
+	switch (xtap_state.state) {
+		case SINGLE_TAP: unregister_code16(KC_0); unregister_code16(KC_LSFT); break;
+		case SINGLE_HOLD: unregister_code16(KC_RSFT); break;
+		case DOUBLE_TAP: unregister_code16(KC_RBRC); break;
+		case TRIPLE_TAP: unregister_code16(KC_RBRC); unregister_code16(KC_LSFT); break;
+	}
+	xtap_state.state = 0;
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+	[TD_X] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, x_finished, x_reset),
+	[LSHIFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lshift_finished, lshift_reset),
+	[RSHIFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, rshift_finished, rshift_reset),
+	[TD_C] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, c_finished, c_reset),
+	[TD_V] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, v_finished, v_reset),
+
 };
 
