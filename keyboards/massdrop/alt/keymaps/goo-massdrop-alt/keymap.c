@@ -10,6 +10,10 @@ enum my_keycodes {
     MD_BOOT,               // Restart into bootloader after hold timeout
     HK_COSL,               // Clear held-down keys
     QWERTY,                // Switch to QWERTY layout
+    DESK_RIGHT,
+    DESK_LEFT,
+    QUICK_NOTE,
+    CTRL_ALT_DEL
 };
 
 enum my_layers {
@@ -96,20 +100,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Function layer
      * ┌───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬────────────┬───────┐
      * │       │       │       │       │       │       │       │       │       │       │       │       │       │            │       │
-     * │  Esc  │  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10  │  F11  │  F12  │    Del     │  End  │
+     * │  Esc  │  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10  │  F11  │  F12  │CTRL_ALT_DEL│  End  │
      * │       │       │       │       │       │       │       │       │       │       │       │       │       │            │       │
      * ├───────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬─────────┼───────┤
      * │          │  RGB  │  RGB  │  RGB  │  RGB  │  RGB  │       │  USB  │  USB  │       │       │       │       │         │       │
-     * │          │ Speed │  Val  │ Speed │  Hue  │  Sat  │       │  Port │  GCR  │       │ PrtSc │ ScrLk │ Pause │ NumPad  │ Mute  │
-     * │          │   -   │   +   │   +   │   +   │   +   │       │       │       │       │       │       │       │         │       │
+     * │          │ Speed │  Val  │ Speed │  Hue  │  Sat  │       │  Port │  GCR  │ QUICK │ PrtSc │ ScrLk │ Pause │ NumPad  │ Mute  │
+     * │          │   -   │   +   │   +   │   +   │   +   │       │       │       │ NOTE  │       │       │       │         │       │
      * ├──────────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─┬─────┴─────────┼───────┤
      * │            │  RGB  │  RGB  │  RGB  │  RGB  │  RGB  │       │       │       │       │       │       │               │       │
      * │  CapsLock  │  Mode │  Val  │  Mode │  Hue  │  Sat  │       │       │       │       │       │       │               │ Vol+  │
      * │            │   -   │   -   │   +   │   -   │   -   │       │       │       │       │       │       │               │       │
      * ├────────────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴──┬────┴───────┬───────┼───────┤
      * │               │  RGB  │       │       │       │       │ 6KRO/ │       │       │       │       │            │       │       │
-     * │               │ On/Off│       │       │       │Restart│ NKRO  │ Debug │       │       │       │            │ PgUp  │ Vol-  │
-     * │               │       │       │       │       │       │       │       │       │       │       │            │       │       │
+     * │               │ On/Off│       │       │       │Restart│ NKRO  │ Debug │ DESK  │  DESK │       │            │ PgUp  │ Vol-  │
+     * │               │       │       │       │       │       │       │       │ LEFT  │ RIGHT │       │            │       │       │
      * ├─────────┬─────┴───┬───┴─────┬─┴───────┴───────┴───────┴───────┴───────┴─────┬─┴───────┼───────┴─┬──┬───────┼───────┼───────┤
      * │         │         │         │                                               │         │         │▒▒│       │       │       │
      * │         │         │         │               Clear modifiers                 │         │         │▒▒│ Home  │ PgDn  │  End  │
@@ -117,11 +121,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * └─────────┴─────────┴─────────┴───────────────────────────────────────────────┴─────────┴─────────┴──┴───────┴───────┴───────┘
      */
     [_FUNCTION] = LAYOUT_65_ansi_blocker(
-        KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_END,
-        _______, RGB_SPD, RGB_VAI, RGB_SPI, RGB_HUI, RGB_SAI, _______, U_T_AUTO,U_T_AGCR,_______, KC_PSCR, KC_SLCK, KC_PAUS, TG_NUMP, KC_MUTE,
-        KC_CAPS, RGB_RMOD,RGB_VAD, RGB_MOD, RGB_HUD, RGB_SAD, _______, _______, _______, _______, _______, _______,          _______, KC_VOLU,
-        _______, RGB_TOG, _______, _______, _______, MD_BOOT, NK_TOGG, DBG_TOG, _______, _______, _______, _______, KC_PGUP, KC_VOLD,
-        _______, _______, _______,                            HK_COSL,                            _______, _______, KC_HOME, KC_PGDN, KC_END
+        KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,     KC_F9,      KC_F10,  KC_F11,  KC_F12,  CTRL_ALT_DEL,  KC_END,
+        _______, RGB_SPD, RGB_VAI, RGB_SPI, RGB_HUI, RGB_SAI, _______, U_T_AUTO,U_T_AGCR,  QUICK_NOTE, KC_PSCR, KC_SLCK, KC_PAUS, TG_NUMP,       KC_MUTE,
+        KC_CAPS, RGB_RMOD,RGB_VAD, RGB_MOD, RGB_HUD, RGB_SAD, _______, _______, _______,   _______,    _______, _______,          _______,       KC_VOLU,
+        _______, RGB_TOG, _______, _______, _______, MD_BOOT, NK_TOGG, DBG_TOG, DESK_LEFT, DESK_RIGHT, _______, _______, KC_PGUP,                KC_VOLD,
+        _______, _______, _______,                            HK_COSL,          _______,   _______,             KC_HOME, KC_PGDN, KC_END
     ),
 
     /* Number pad (FN-\ to toggle)
@@ -268,9 +272,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
               }
             }
             return false;
+	// DESK_LEFT will do move desktop to the left
+	case DESK_RIGHT: 
+            if (record->event.pressed) {
+		register_code(KC_LCTL);
+		register_code(KC_LGUI);
+		tap_code_delay(KC_RIGHT, 200);
+		unregister_code(KC_LCTL);
+		unregister_code(KC_LGUI);
+                break;
+	    }
+		return true;
+	// DESK_LEFT will do move desktop to the left
+	case DESK_LEFT:
+            if (record->event.pressed) {
+		register_code(KC_LCTL);
+		register_code(KC_LGUI);
+		tap_code_delay(KC_LEFT, 200);
+		unregister_code(KC_LCTL);
+		unregister_code(KC_LGUI);
+                break;
+	    }
+		return true;
+	// QUICK_NOTE will do Open quicknote in OneNote
+	case QUICK_NOTE:
+            if (record->event.pressed) {
+		register_code(KC_LALT);
+		register_code(KC_LGUI);
+		tap_code_delay(KC_N, 200);
+		unregister_code(KC_LALT);
+		unregister_code(KC_LGUI);
+                break;
+            }
+                return true;
+	case CTRL_ALT_DEL:
+            if (record->event.pressed) {
+		register_code(KC_LCTL);
+		register_code(KC_LALT);
+		tap_code_delay(KC_DEL, 200);
+		unregister_code(KC_LCTL);
+		unregister_code(KC_LALT);
+                break;
+	    }
+                return true;
         default:
             return true; //Process all other keycodes normally
     }
+    return true;
 }
 
 led_instruction_t led_instructions[] = {
@@ -290,6 +338,8 @@ led_instruction_t led_instructions[] = {
 	{ .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id1 = 131072, .layer = 1, .r = 252, .g =0, .b = 0},
     // Function Layer Function Key
 	{ .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id1 = 2147483648, .layer = 1, .r = 33, .g =150, .b = 243},
+    // Function Layer Windows keys (desk right/left, ctrl-alt-del,onenote)
+        { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 16785408, .id1 = 3145728, .id2 = 0, .id3 = 0, .layer = 1, .r=255, .g=95, .b=0},
     // NumberPad Layer Underglow + Numbers
 	{ .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 29360128, .id1 = 540541152, .id2 = 4294967288, .id3 = 511, .layer = 2, .r = 255, .g =255, .b = 255},
     // NumberPad Layer operators
